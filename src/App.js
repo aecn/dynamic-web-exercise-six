@@ -18,51 +18,75 @@ const firebaseConfig = {
   appId: "1:176896687562:web:96de2e42271af7af5fa333"
 };
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <UserProfilePage />,
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/create",
-    element: <CreateUserPage />,
-  },
-]);
-
 function App() {
   const [appInitialized, setAppInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInformation, setUserInformation] = useState({});
-
+  // app is initialized when it is ready
   useEffect(() => {
+    // initialize firebase
     initializeApp(firebaseConfig);
     setAppInitialized(true);
   }, []);
-
+  // checks if user is logged in
+  // user loads page, check their status
+  // set state accordingly
   useEffect(() => {
     if (appInitialized) {
       const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        // user is signed in
         setUserInformation(user);
         setIsLoggedIn(true);
       } else {
+        // user is signed out
         setUserInformation({});
         setIsLoggedIn(false);
       }
+      // whenever state changes setLoading to false 
         setIsLoading(false);
       });
     }
   }, [appInitialized]);
 
+  console.log({ userInformation });
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: 
+      <UserProfilePage 
+        isLoggedIn={isLoggedIn}
+        isLoading={isLoading}
+        userInformation={userInformation}
+        setIsLoggedIn={setIsLoggedIn}
+        setUserInformation={setUserInformation} 
+      />,
+    },
+    {
+      path: "/login",
+      element: 
+      <LoginPage
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
+        setUserInformation={setUserInformation} 
+      />,
+    },
+    {
+      path: "/create",
+      element: 
+        <CreateUserPage
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+          setUserInformation={setUserInformation}
+        />,
+    },
+  ]);
+
   return (
     <div className="App">
-      <Header />
       <RouterProvider router={router} />
     </div>
   );
