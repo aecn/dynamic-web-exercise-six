@@ -1,24 +1,57 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from "react-router";
 import LoginForm from '../components/LoginForm';
 import Header from '../components/Header';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 function LoginPage({ isLoggedIn, setIsLoggedIn, setUserInformation }) {
+    const [errors, setErrors] = useState();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (isLoggedIn) navigate("/");
-    }, [isLoggedIn]);
+    }, [isLoggedIn, navigate]);
+
+    const logInUser = useCallback((e) => {
+        e.preventDefault();
+        // assign email & password to variables from form
+        const email = e.currentTarget.email.value;
+        const password = e.currentTarget.password.value;
+        console.log({ email, password });
+
+        const auth = getAuth();
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                // since user is true, set logged in
+                setIsLoggedIn(true);
+                // provide info about user via setState
+                setUserInformation({
+                    email: user.email,
+                    displayName: user.displayName,
+                    uid: user.uid,
+                    accessToken: user.accessToken
+                });
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.warn({ error, errorCode, errorMessage });
+                setErrors(errorMessage);
+            });
+        }, [setIsLoggedIn, setUserInformation]);
 
     return (
         <>
             <Header 
+                isLoggedIn={isLoggedIn} 
                 setIsLoggedIn={setIsLoggedIn} 
                 setUserInformation={setUserInformation} 
             />
             <div className="PageWrapper">
                 <h1>Login</h1>
-                <LoginForm />
+                <LoginForm logInUser={logInUser}/>
+                {errors}
             </div>
         </>
     );       

@@ -47,7 +47,8 @@ function CreateUserPage({ isLoggedIn, setIsLoggedIn, setUserInformation }) {
 
     return (
         <>
-            <Header 
+            <Header
+                isLoggedIn={isLoggedIn} 
                 setIsLoggedIn={setIsLoggedIn} 
                 setUserInformation={setUserInformation} 
             />
