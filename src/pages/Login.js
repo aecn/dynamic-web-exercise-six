@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from "react-router";
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import LoginForm from '../components/LoginForm';
 import Header from '../components/Header';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 function LoginPage({ isLoggedIn, setIsLoggedIn, setUserInformation }) {
     const [errors, setErrors] = useState();
@@ -12,11 +12,12 @@ function LoginPage({ isLoggedIn, setIsLoggedIn, setUserInformation }) {
         if (isLoggedIn) navigate("/");
     }, [isLoggedIn, navigate]);
 
-    const logInUser = useCallback((e) => {
+    const loginUser = useCallback((e) => {
         e.preventDefault();
         // assign email & password to variables from form
         const email = e.currentTarget.email.value;
         const password = e.currentTarget.password.value;
+
         console.log({ email, password });
 
         const auth = getAuth();
@@ -30,7 +31,7 @@ function LoginPage({ isLoggedIn, setIsLoggedIn, setUserInformation }) {
                     email: user.email,
                     displayName: user.displayName,
                     uid: user.uid,
-                    accessToken: user.accessToken
+                    accessToken: user.accessToken,
                 });
             })
             .catch((error) => {
@@ -50,8 +51,8 @@ function LoginPage({ isLoggedIn, setIsLoggedIn, setUserInformation }) {
             />
             <div className="PageWrapper">
                 <h1>Login</h1>
-                <LoginForm logInUser={logInUser}/>
-                {errors}
+                <LoginForm loginUser={loginUser} />
+                <p>{errors}</p>
             </div>
         </>
     );       
