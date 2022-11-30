@@ -7,7 +7,7 @@ import './App.css';
 import CreateUserPage from "./pages/CreateUser";
 import LoginPage from "./pages/Login";
 import UserProfilePage from "./pages/UserProfile";
-import Header from "./components/Header";
+//import Header from "./components/Header";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDXHJe7XKD4yXJ6Xhm82n23vNbUFBo02d0",
